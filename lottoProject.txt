@@ -1,0 +1,60 @@
+Using .Net Core 5 develop a Lottery simulator. It must have the following requirements.
+* The app starts with either looking for previous draw histories, user stats or play a game.
+* User will select different game modes, either lotto or thunderball. 
+* The amount of "lines" can be selected. 1 line mininium, 5 maxinium.
+* The user can select a lucky dip or manual number selection.
+* A running total of amount paid shall be kept, £1 for Thunderball, £2 for Lotto per line.
+* The number of free lucky dips for Lotto only shall be kept.
+* The user will enter their numbers and shall be validated using the rules valid for 2021. These numbes shall include "bonus balls"
+* The draw is the created and numbers printed to the terminal window. 
+* The amount won should be presented, including any lucky dips if Lotto.
+	* IF a lucky dip is won, then the user is automatically re-entered with user numbers randomly selected. 
+* The combined total won should be presented.
+* The total profit should be presented.
+
+
+Draw histories, numbers choosen, prize money won, number of lucky dips, total prize money and total spent must be saved to a database.
+* The database must use SQL Server
+* Entity framework must be used and must follow a code first approach.
+
+User stats inclue:
+* Average prize amount won for each game.
+* Number played for each game.
+* Highest amount won for each game
+* Most selected number and most drawn number for each game.
+* The number of no wins for each game.
+
+To Find draw histories, the user would enter a draw ID and the following returned
+* The lines for the draw
+* The draw result
+* The amount won
+* An option to list all draw IDs and the draw result should be provided.
+
+Appendices:
+1) Lotto prize break down and format
+	* User selects 6 numbers for each line, however 7 are drawn. The 7th number is a bonus number.
+	* Numbers must be between 1 to 59.
+	* Each number cannot be selected twice, nor can the draw have the 
+	* We are assuming that the prize winner gets £2m and no roll over
+ 	Match 6: £2,000,000
+	Match 5 + Bonus: £1,000,000
+	Match 5: £1,750
+	Match 4: £140
+	Match 3: £30
+	Match 2: Free lucky dip.
+
+2) Thunderball prize break down and format
+	* User selects 5 numbers and a bonus number for each line.
+	* The regular 5 numbers must be between 1 to 39, the bonus number is between 1 to 14.
+	* Each number cannot be selected twice, however the bonus number can be the same as a regular.
+	* So 1, 3 ,30, 25, 27, Bonus: 1, is valid. 
+	* Thunderball has a fixed prize amount and the breakdown is as follows:
+	Match 5 + Thunderball: £500,000
+	Match 5: £5,000
+	Match 4 + Thunderball: £250
+	Match 4: £100
+	Match 3 + Thunderball: £20
+	Match 3: £10
+	Match 2 + Thunderball: £10
+	Match 1 + Thunderball: £5
+	Match 0 + Thunderball: £3
