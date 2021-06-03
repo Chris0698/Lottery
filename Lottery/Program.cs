@@ -2,11 +2,24 @@
 
 namespace Lottery
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            if(args.Length == 0)
+            {
+                Console.WriteLine("Enter game: ");
+                String mode = Console.ReadLine();
+                if(mode == "lotto")
+                {
+                    
+                }
+                else if(mode == "thunderball")
+                {
+                    IGame thunderball = new Thunderball();
+                    thunderball.SelectMode();
+                }
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ Using .Net Core 5 develop a Lottery simulator. It must have the following requir
 * The draw is the created and numbers printed to the terminal window. 
 * The amount won should be presented, including any lucky dips if Lotto.
 	* IF a lucky dip is won, then the user is automatically re-entered with user numbers randomly selected. 
+	* The amount of lines depends on how many dips, 
 * The combined total won should be presented.
 * The total profit should be presented.
 
@@ -20,7 +21,7 @@ Draw histories, numbers choosen, prize money won, number of lucky dips, total pr
 User stats inclue:
 * Average prize amount won for each game.
 * Number played for each game.
-* Highest amount won for each game
+* Highest amount won for each game and the draw ID for this
 * Most selected number and most drawn number for each game.
 * The number of no wins for each game.
 
