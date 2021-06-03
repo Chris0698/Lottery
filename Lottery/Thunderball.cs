@@ -9,10 +9,12 @@ namespace Lottery
     public class Thunderball : IGame
     {
         private int price;
+        private IDictionary<int, int> prizeTable;
 
         public Thunderball()
         {
             price = 1;
+            prizeTable = new Dictionary<int, int>();
         }
 
         private void OrderArray(int [] array)
@@ -38,10 +40,16 @@ namespace Lottery
             Random random = new Random();
 
             //main balls
-            for(int i = 0; i < NUMBER_OF_BALLS - 1; i++)
+            for(int i = 0; i < NUMBER_OF_BALLS; i++)
             {
                 int number = random.Next(1, 40);
                 numbers[i] = number;
+            }
+
+            //check that the numbers do not repeat, if repeats then redraw
+            if(false)
+            {
+                GenerateDraw();
             }
 
             OrderArray(numbers);
@@ -68,25 +76,35 @@ namespace Lottery
                 String line = Console.ReadLine();
                 if(int.TryParse(line, out int numberOfLines))
                 {
-                    int[][] allUserNumbers = new int[numberOfLines][];
+                    Dictionary<int, int[]> userLines = new Dictionary<int, int[]>();
                     int toPay = numberOfLines * price;
 
                     for(int i = 0; i < numberOfLines; i++)
                     {
-                        Console.WriteLine("Enter your numbers for gamme {0}: ", i);
-                        String numbersString = Console.ReadLine();
-                        String[] numbers = numbersString.Split(" ");
-                        int[] userNumbers = new int[numbers.Length];
-                        for(int j = 0; j < numbers.Length; j++)
+                        int[] userNumbers = new int[6]; //5 main + 1 B
+                        Console.WriteLine("For Game {0}, do you want a lucky dip?");
+                        String asnwser = Console.ReadLine();
+                        if(asnwser == "yes")
                         {
-                            if(int.TryParse(numbers[i], out int number))
+                            userNumbers = GenerateDraw();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Enter your numbers for gamme {0}: ", i + 1);
+                            String numbersString = Console.ReadLine();
+                            String[] numbers = numbersString.Split(" ");
+                            for (int j = 0; j < numbers.Length; j++)
                             {
-                                userNumbers[j] = number;
+                                if (int.TryParse(numbers[i], out int number))
+                                {
+                                    userNumbers[j] = number;
+                                }
                             }
+
+                            OrderArray(userNumbers);
                         }
 
-                        OrderArray(userNumbers);
-                        allUserNumbers[i] = userNumbers;
+                        userLines.Add(i, userNumbers);
                     }
 
                     int [] drawnNumbers = GenerateDraw();
@@ -105,7 +123,7 @@ namespace Lottery
                     }
 
                     Console.WriteLine("Drawn numbers: " + balls);
-                    CheckWinnings();
+                    CheckWinnings(drawnNumbers, userLines, toPay);
                 }
             }
             else if(mode == "search")
@@ -118,9 +136,29 @@ namespace Lottery
             }
         }
 
-        public void CheckWinnings()
+        public void CheckWinnings(int [] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost)
         {
-            throw new NotImplementedException();
+            int moneyWon = 0;
+            int totalMatch = 0;
+
+            //loop through each of the user lines
+            foreach(var line in userLines)
+            {
+                int[] userNumbers = line.Value;
+                for(int i = 0;  i < userNumbers.Length; i++)
+                {
+                    for(int j = i + 1; j < userNumbers.Length; j++)
+                    {
+                        if(userNumbers[j] == ballsDrawn[i])
+                        {
+                            totalMatch++;
+                        }
+                    }
+                }
+            }
+
+
+            Console.WriteLine("You won: £{0}", moneyWon);
         }
     }
 }

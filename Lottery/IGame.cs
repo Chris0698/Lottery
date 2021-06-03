@@ -10,7 +10,7 @@ namespace Lottery
     {
         public void SelectMode();
 
-        public void CheckWinnings();
+        public void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost);
 
         public int [] GenerateDraw();
 
