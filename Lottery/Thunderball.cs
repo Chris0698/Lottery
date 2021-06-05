@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lottery
 {
@@ -10,10 +7,12 @@ namespace Lottery
     {
         private int price;
         private IDictionary<int, int> prizeTable;
+        private int drawNumber;
 
-        public Thunderball()
+        public Thunderball(int drawNumber)
         {
             price = 1;
+            this.drawNumber = drawNumber;
             prizeTable = new Dictionary<int, int>();
         }
 
@@ -46,8 +45,22 @@ namespace Lottery
                 numbers[i] = number;
             }
 
-            //check that the numbers do not repeat, if repeats then redraw
-            if(false)
+            //check that the numbers do not have duplicates, if repeats then redraw
+            //i < numbers.Length should be 5 because we are checking the selected balls
+            bool foundDupliacte = false;
+            for(int i = 0; i < numbers.Length; i++)
+            {
+                for(int j = i + 1; j < numbers.Length; j++)
+                {
+                    if(j != i && numbers[i] == numbers[j])
+                    {
+                        foundDupliacte = true;
+                        break;
+                    }
+                }
+            }
+
+            if(foundDupliacte)
             {
                 GenerateDraw();
             }
@@ -74,19 +87,35 @@ namespace Lottery
             {
                 Console.WriteLine("How many lines, £1 per line, 5 lines maximiun");
                 String line = Console.ReadLine();
-                if(int.TryParse(line, out int numberOfLines))
+                Dictionary<int, int[]> userLines = new Dictionary<int, int[]>();
+                if (int.TryParse(line, out int numberOfLines))
                 {
-                    Dictionary<int, int[]> userLines = new Dictionary<int, int[]>();
                     int toPay = numberOfLines * price;
 
+                    Console.WriteLine("number of games: " + numberOfLines);
                     for(int i = 0; i < numberOfLines; i++)
                     {
-                        int[] userNumbers = new int[6]; //5 main + 1 B
-                        Console.WriteLine("For Game {0}, do you want a lucky dip?");
+                        int[] userNumbers = new int[6]; //5 main + 1 Bonus
+                        Console.WriteLine("For Game {0}, do you want a lucky dip?", i + 1);
                         String asnwser = Console.ReadLine();
                         if(asnwser == "yes")
                         {
+                            //this does not loop correctly if answer is yes
                             userNumbers = GenerateDraw();
+                            String randomBalls = "";
+                            for (int j = 0; j < userNumbers.Length; j++)
+                            {
+                                if (j < userNumbers.Length - 1)
+                                {
+                                    randomBalls += userNumbers[j] + " ";
+                                }
+                                else
+                                {
+                                    randomBalls += "Bonus: " + userNumbers[j];
+                                }
+                            }
+
+                            Console.WriteLine("Your numbers: " + randomBalls);
                         }
                         else
                         {
@@ -102,6 +131,7 @@ namespace Lottery
                             }
 
                             OrderArray(userNumbers);
+
                         }
 
                         userLines.Add(i, userNumbers);
@@ -140,9 +170,10 @@ namespace Lottery
         {
             int moneyWon = 0;
             int totalMatch = 0;
+            bool bonusMatched = false;
 
             //loop through each of the user lines
-            foreach(var line in userLines)
+            foreach (var line in userLines)
             {
                 int[] userNumbers = line.Value;
                 for(int i = 0;  i < userNumbers.Length; i++)
@@ -154,11 +185,19 @@ namespace Lottery
                             totalMatch++;
                         }
                     }
+
+                    //compare the bonuses
+                    if (ballsDrawn[ballsDrawn.Length - 1] == userNumbers[userNumbers.Length - 1])
+                    {
+                        bonusMatched = true;
+                    }
                 }
             }
 
+            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", totalMatch, bonusMatched);
 
             Console.WriteLine("You won: £{0}", moneyWon);
+            Console.WriteLine("Draw Number: {0}", drawNumber);
         }
     }
 }
