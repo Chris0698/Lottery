@@ -7,19 +7,15 @@ namespace Lottery
     {
         private int price;  //price of 1 game
         private IDictionary<int, int> prizeTable;
-        private int drawNumber;
 
 
-
-        private int[] drawnNumbers;
         private int cost;   //total price including multiple rows
         private Dictionary<int, int[]> userLines;
         private int prizeMoney;
 
-        public Thunderball(int drawNumber)
+        public Thunderball()
         {
             price = 1;
-            this.drawNumber = drawNumber;
             prizeTable = new Dictionary<int, int>();
         }
 
@@ -42,19 +38,44 @@ namespace Lottery
         public int[] GenerateDraw()
         {
             const int NUMBER_OF_BALLS = 6;  //5 main ones, 1 bonus
-            drawnNumbers = new int[NUMBER_OF_BALLS];
+            int[] drawnNumbers = new int[NUMBER_OF_BALLS];
             Random random = new Random();
 
             //main balls
-            for(int i = 0; i < NUMBER_OF_BALLS; i++)
+            /*for(int i = 0; i < NUMBER_OF_BALLS; i++)
             {
                 int number = random.Next(1, 40);
                 drawnNumbers[i] = number;
+            }*/
+
+            //populate the numbers in a list with the number and if selected
+            Dictionary<int, bool> numbers = new();
+            for(int i = 0; i < 39; i++)
+            {
+                numbers.Add(i + 1, false);
+            }
+
+            //for 5 times, select an element, check if seen is false, then add the number to an array
+            for(int i = 0; i < 5; i++)
+            {
+                bool valid = false;
+                while(!valid)
+                {
+                    int index = random.Next(1, 39);
+                    bool selected = numbers[index];
+                    if (!selected)
+                    {
+                        numbers[index] = true;
+                        drawnNumbers[i] = index;
+                        valid = true;
+                    }
+                }
+              
             }
 
             //check that the numbers do not have duplicates, if repeats then redraw
             //i < numbers.Length should be 5 because we are checking the selected balls
-            bool foundDupliacte = false;
+          /*  bool foundDupliacte = false;
             for(int i = 0; i < drawnNumbers.Length; i++)
             {
                 for(int j = i + 1; j < drawnNumbers.Length; j++)
@@ -69,14 +90,16 @@ namespace Lottery
 
             if(foundDupliacte)
             {
-                GenerateDraw();
-            }
+             //   GenerateDraw();
+            //} */
 
             OrderArray(drawnNumbers);
 
-            //bonus
+            //bonus ball
+            //important: we only populate the first 5 elements of the array so there a 0 in the last index.
+            //after OrderArray the 0 is moved first, meaning when we print out the numbers, we need to start at index 1
             int thunderball = random.Next(1, 14);
-            drawnNumbers[NUMBER_OF_BALLS - 1] = thunderball;
+            drawnNumbers[0] = thunderball;
 
             return drawnNumbers;
         }
@@ -110,30 +133,35 @@ namespace Lottery
                             //this does not loop correctly if answer is yes
                             userNumbers = GenerateDraw();
                             String randomBalls = "";
-                            for (int j = 0; j < userNumbers.Length; j++)
+                            for (int j = 1; j < userNumbers.Length; j++)    //see earlier why this starts at 1
                             {
-                                if (j < userNumbers.Length - 1)
+                                randomBalls += userNumbers[j] + " ";
+                               /* if (j < userNumbers.Length - 1)
                                 {
                                     randomBalls += userNumbers[j] + " ";
                                 }
                                 else
                                 {
                                     randomBalls += "Bonus: " + userNumbers[j];
-                                }
+                                }*/
                             }
+
+                            randomBalls += "Bonus: " + userNumbers[0];
 
                             Console.WriteLine("Your numbers: " + randomBalls);
                         }
                         else
                         {
                             Console.WriteLine("Enter your numbers for gamme {0}: ", i + 1);
+                            Console.WriteLine("Select 5 mumbers between 1 and 39 with no repeats, and 1 bonus between 1 - 14");
                             String numbersString = Console.ReadLine();
                             String[] numbers = numbersString.Split(" ");
-                            for (int j = 0; j < numbers.Length; j++)
+                            for (int j = 0; j < numbers.Length; j++) 
                             {
                                 if (int.TryParse(numbers[i], out int number))
                                 {
                                     userNumbers[j] = number;
+                                    //error checking required
                                 }
                             }
 
@@ -147,18 +175,19 @@ namespace Lottery
                     int [] drawnNumbers = GenerateDraw();
 
                     String balls = "";
-                    for(int i = 0; i < drawnNumbers.Length; i++)
+                    for(int i = 1; i < drawnNumbers.Length; i++)
                     {
-                        if(i  < drawnNumbers.Length - 1)
+                        balls += drawnNumbers[i] + " ";
+                     /*   if(i  < drawnNumbers.Length - 1)
                         {
                             balls += drawnNumbers[i] + " ";
                         }
                         else
                         {
                             balls += "Bonus: " + drawnNumbers[i];
-                        }
+                        }*/
                     }
-
+                    balls += "Bonus: " + drawnNumbers[0];
                     Console.WriteLine("Drawn numbers: " + balls);
                     CheckWinnings(drawnNumbers, userLines, cost);
                 }
@@ -201,21 +230,24 @@ namespace Lottery
                 }
             }
 
+            Console.WriteLine("Cost: £{0}", cost);
             Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", totalMatch, bonusMatched);
 
             Console.WriteLine("You won: £{0}", prizeMoney);
-            Console.WriteLine("Draw Number: {0}", drawNumber);
+           // Console.WriteLine("Draw Number: {0}", drawNumber);
 
-            Save();
+            //Save();
         }
 
-        public void Save()
+        private void Save(int[] drawNumbers)
         {
+            //get the last ID first to set the next one.
+
             using(DrawContext context = new DrawContext())
             {
                 Draw draw = new();
                 draw.Cost = cost;
-                draw.DrawnNumbers = drawnNumbers;
+                draw.DrawnNumbers = drawNumbers;
                 draw.ID = 1;
                 draw.UserLines = userLines;
                 draw.PrizeMoney = prizeMoney;

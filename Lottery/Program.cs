@@ -16,7 +16,7 @@ namespace Lottery
                 }
                 else if(mode == "thunderball")
                 {
-                    IGame thunderball = new Thunderball(1);
+                    IGame thunderball = new Thunderball();
                     thunderball.SelectMode();
                 }
             }
