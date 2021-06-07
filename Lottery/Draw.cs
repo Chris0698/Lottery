@@ -4,37 +4,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Lottery
 {
     public class Draw
     {
         [Key]
+        //[DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        //public int[] DrawnNumbers { get; set; }
+        public string DrawnNumbers { get; set; }
 
-        public string Numbers { get; private set; }
-
-        [NotMapped]
-        public Dictionary<int, int[]> UserLines { get; set; }
+        public string UserNumbers { get; set; }
 
         public int Cost { get; set; }
 
         public int PrizeMoney { get; set; }
 
-        public Games Game { get; set; } //might not be needed
+        public string SelectedGame { get; set; }
 
-        public void SetNumbers(int[]numbers)
+        public void SetValues(int [] drawNumbers, Dictionary<int, int[]> UserLines, Games game)
         {
-            String line = "";
-            foreach(int number in numbers)
+            //database saved drawn number as string
+            foreach (int number in drawNumbers)
             {
-                line += number + " ";
+                DrawnNumbers += number + " ";
             }
-            Numbers = line;
-        }
-     
+
+            //All user numbers
+            foreach(var line in UserLines)
+            {
+                int[] numbers = line.Value;
+                foreach(int number in numbers)
+                {
+                    UserNumbers += number + " ";
+                }
+                UserNumbers += "|";
+            }
+
+            //game is stored as string
+            if(game == Games.thunderball)
+            {
+                this.SelectedGame = Game.Thunderball.ToString();
+            }
+            else
+            {
+                this.SelectedGame = Game.Lotto.ToString();
+            }
+        }     
     }
 }

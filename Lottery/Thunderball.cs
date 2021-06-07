@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lottery
@@ -76,7 +77,12 @@ namespace Lottery
 
         public void GetStats()
         {
-            throw new NotImplementedException();
+            int totalSpent = 0;
+            int totalWon = 0;
+            using(DrawContext context = new())
+            {
+                var draws = context.Draw.ToList();
+            }
         }
 
         public void SelectMode()
@@ -244,18 +250,24 @@ namespace Lottery
 
         private void Save(int[] drawNumbers)
         {
-            //get the last ID first to set the next one.
-
             using(DrawContext context = new DrawContext())
             {
+                //get the ID first
+                var draws = context.Draw.ToList();
+                int lastID = draws.Last().ID;
+
+                //operator precedence, cant do newID = lastID++ since the variable
+                //is assigned first then incremented
+                int newID = lastID;
+                newID++;
+
+
+
                 Draw draw = new();
                 draw.Cost = cost;
-                //draw.DrawnNumbers = drawNumbers;
-                draw.ID = 1;
-                draw.UserLines = userLines;
+                draw.ID = newID;
                 draw.PrizeMoney = prizeMoney;
-                draw.Game = Games.thunderball;
-                draw.SetNumbers(drawNumbers);
+                draw.SetValues(drawNumbers, userLines, Games.thunderball);
 
                 context.Draw.Add(draw);
                 context.SaveChanges();

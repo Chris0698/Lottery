@@ -4,7 +4,7 @@ namespace Lottery
 {
     public class DrawContext : DbContext
     {
-        private string connectionString = "Server=(localdb)\\mssqllocaldb;Database=EFCore;Trusted_Connection=True;";
+        private string connectionString = "Server=(localdb)\\mssqllocaldb;Database=Draws;Trusted_Connection=True;";
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -10,12 +10,12 @@ namespace Lottery.Migrations
                 name: "Draw",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Numbers = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ID = table.Column<int>(type: "int", nullable: false),
+                    DrawnNumbers = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserNumbers = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cost = table.Column<int>(type: "int", nullable: false),
                     PrizeMoney = table.Column<int>(type: "int", nullable: false),
-                    Game = table.Column<int>(type: "int", nullable: false)
+                    SelectedGame = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
