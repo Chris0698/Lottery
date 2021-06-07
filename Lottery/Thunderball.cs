@@ -6,8 +6,6 @@ namespace Lottery
     public class Thunderball : IGame
     {
         private int price;  //price of 1 game
-        private IDictionary<int, int> prizeTable;
-
 
         private int cost;   //total price including multiple rows
         private Dictionary<int, int[]> userLines;
@@ -16,7 +14,6 @@ namespace Lottery
         public Thunderball()
         {
             price = 1;
-            prizeTable = new Dictionary<int, int>();
         }
 
         private void OrderArray(int [] array)
@@ -40,13 +37,6 @@ namespace Lottery
             const int NUMBER_OF_BALLS = 6;  //5 main ones, 1 bonus
             int[] drawnNumbers = new int[NUMBER_OF_BALLS];
             Random random = new Random();
-
-            //main balls
-            /*for(int i = 0; i < NUMBER_OF_BALLS; i++)
-            {
-                int number = random.Next(1, 40);
-                drawnNumbers[i] = number;
-            }*/
 
             //populate the numbers in a list with the number and if selected
             Dictionary<int, bool> numbers = new();
@@ -72,26 +62,6 @@ namespace Lottery
                 }
               
             }
-
-            //check that the numbers do not have duplicates, if repeats then redraw
-            //i < numbers.Length should be 5 because we are checking the selected balls
-          /*  bool foundDupliacte = false;
-            for(int i = 0; i < drawnNumbers.Length; i++)
-            {
-                for(int j = i + 1; j < drawnNumbers.Length; j++)
-                {
-                    if(j != i && drawnNumbers[i] == drawnNumbers[j])
-                    {
-                        foundDupliacte = true;
-                        break;
-                    }
-                }
-            }
-
-            if(foundDupliacte)
-            {
-             //   GenerateDraw();
-            //} */
 
             OrderArray(drawnNumbers);
 
@@ -136,14 +106,6 @@ namespace Lottery
                             for (int j = 1; j < userNumbers.Length; j++)    //see earlier why this starts at 1
                             {
                                 randomBalls += userNumbers[j] + " ";
-                               /* if (j < userNumbers.Length - 1)
-                                {
-                                    randomBalls += userNumbers[j] + " ";
-                                }
-                                else
-                                {
-                                    randomBalls += "Bonus: " + userNumbers[j];
-                                }*/
                             }
 
                             randomBalls += "Bonus: " + userNumbers[0];
@@ -178,14 +140,6 @@ namespace Lottery
                     for(int i = 1; i < drawnNumbers.Length; i++)
                     {
                         balls += drawnNumbers[i] + " ";
-                     /*   if(i  < drawnNumbers.Length - 1)
-                        {
-                            balls += drawnNumbers[i] + " ";
-                        }
-                        else
-                        {
-                            balls += "Bonus: " + drawnNumbers[i];
-                        }*/
                     }
                     balls += "Bonus: " + drawnNumbers[0];
                     Console.WriteLine("Drawn numbers: " + balls);
@@ -206,6 +160,7 @@ namespace Lottery
         {
             prizeMoney = 0;
             int totalMatch = 0;
+            int maxAmountMatch = 0;
             bool bonusMatched = false;
 
             //loop through each of the user lines
@@ -223,20 +178,68 @@ namespace Lottery
                     }
 
                     //compare the bonuses
-                    if (ballsDrawn[ballsDrawn.Length - 1] == userNumbers[userNumbers.Length - 1])
+                    if (ballsDrawn[0] == userNumbers[0])
                     {
                         bonusMatched = true;
                     }
+
+                    if(maxAmountMatch < totalMatch)
+                    {
+                        maxAmountMatch = totalMatch;
+                    }
+
+                    totalMatch = 0;
                 }
             }
 
-            Console.WriteLine("Cost: £{0}", cost);
-            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", totalMatch, bonusMatched);
+            if(maxAmountMatch == 0 && bonusMatched)
+            {
+                prizeMoney = 3;
+            }
+            else if(maxAmountMatch == 1 && bonusMatched)
+            {
+                prizeMoney = 5;
+            }
+            else if(maxAmountMatch == 2 && bonusMatched)
+            {
+                prizeMoney = 10;
+            }
+            else if(maxAmountMatch == 3)
+            {
+                prizeMoney = 10;
+            }
+            else if(maxAmountMatch == 3 && bonusMatched)
+            {
+                prizeMoney = 20;
+            }
+            else if(maxAmountMatch == 4)
+            {
+                prizeMoney = 100;
+            }
+            else if(maxAmountMatch == 4 && bonusMatched)
+            {
+                prizeMoney = 250;
+            }
+            else if(maxAmountMatch == 5)
+            {
+                prizeMoney = 5000;
+            }
+            else if(maxAmountMatch == 5 && bonusMatched)
+            {
+                prizeMoney = 500000;
+            }
+            else
+            {
+                prizeMoney = 0;
+            }
+
+            Console.WriteLine("Total cost: £{0}", cost);
+            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", maxAmountMatch, bonusMatched);
 
             Console.WriteLine("You won: £{0}", prizeMoney);
            // Console.WriteLine("Draw Number: {0}", drawNumber);
 
-            //Save();
+            Save(ballsDrawn);
         }
 
         private void Save(int[] drawNumbers)
@@ -247,10 +250,12 @@ namespace Lottery
             {
                 Draw draw = new();
                 draw.Cost = cost;
-                draw.DrawnNumbers = drawNumbers;
+                //draw.DrawnNumbers = drawNumbers;
                 draw.ID = 1;
                 draw.UserLines = userLines;
                 draw.PrizeMoney = prizeMoney;
+                draw.Game = Games.thunderball;
+                draw.SetNumbers(drawNumbers);
 
                 context.Draw.Add(draw);
                 context.SaveChanges();
