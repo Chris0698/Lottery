@@ -45,11 +45,11 @@ namespace Lottery
             //game is stored as string
             if(game == Games.thunderball)
             {
-                this.SelectedGame = Game.Thunderball.ToString();
+                this.SelectedGame = GameTypes.Thunderball.ToString();
             }
             else
             {
-                this.SelectedGame = Game.Lotto.ToString();
+                this.SelectedGame = GameTypes.Lotto.ToString();
             }
         }     
     }

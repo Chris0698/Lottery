@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Lottery
 {
-    public class Thunderball : IGame
+    public class Thunderball : Game, IGame
     {
         private int price;  //price of 1 game
 
@@ -15,22 +15,6 @@ namespace Lottery
         public Thunderball()
         {
             price = 1;
-        }
-
-        private void OrderArray(int [] array)
-        {
-            for(int i = 0;  i < array.Length; i++)
-            {
-                for(int j = 1 + i; j < array.Length; j++)
-                {
-                    if(array[i] > array[j])
-                    {
-                        int t = array[i];
-                        array[i] = array[j];
-                        array[j] = t;
-                    }
-                }
-            }
         }
 
         public int[] GenerateDraw()
@@ -79,9 +63,74 @@ namespace Lottery
         {
             int totalSpent = 0;
             int totalWon = 0;
+            int numberPlayed = 0;
+            int highestWinning = 0;
             using(DrawContext context = new())
             {
-                var draws = context.Draw.ToList();
+                List<Draw> draws = context.Draw.ToList();
+                if(draws != null)
+                {
+                    foreach (Draw draw in draws)
+                    {
+                        if (draw.SelectedGame == "Thunderball")
+                        {
+                            //since its £1 per game, just add the total cost
+                            numberPlayed += draw.Cost;
+
+                            totalSpent += draw.Cost;
+                            totalWon += draw.PrizeMoney;
+
+                            if (draw.PrizeMoney > highestWinning)
+                            {
+                                highestWinning = draw.PrizeMoney;
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("-----------Stats for Thunderball-------------");
+                    Console.WriteLine("Total Games Played: {0}", numberPlayed);
+                    Console.WriteLine("Total Spent: £{0}.00", totalSpent);
+
+                    //remember int / int results in int
+                    float averageWinning = (float)totalWon / (float)numberPlayed;
+                    Console.WriteLine("Average Won: £" + averageWinning);
+                    Console.WriteLine("Highest Winning: £{0}.00", highestWinning);
+                    Console.WriteLine("Total Won: £{0}.00", totalWon);
+                }
+                else
+                {
+                    Console.WriteLine("No records");
+                }
+            }
+        }
+
+        public void Search()
+        {
+            Console.WriteLine("Enter Draw ID: ");
+            String enteredID = Console.ReadLine();
+            if(int.TryParse(enteredID, out int ID))
+            {
+                using (DrawContext context = new())
+                {
+                    if(context.Draw != null)
+                    {
+                        List<Draw> draws = context.Draw.ToList();
+                        foreach (Draw draw in draws)
+                        {
+                            //really thunderball and lotto should be in its own table
+                            if (draw.ID == ID && draw.SelectedGame == "Thunderball")
+                            {
+                                string drawnNumbers = draw.DrawnNumbers;
+
+                               
+                                Console.WriteLine("Drawn Numbers: " + drawnNumbers);
+          
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
             }
         }
 
@@ -91,7 +140,7 @@ namespace Lottery
             String mode = Console.ReadLine();
             if(mode == "play")
             {
-                Console.WriteLine("How many lines, £1 per line, 5 lines maximiun");
+                Console.WriteLine("How many games, £1 per line, 5 games maximiun");
                 String line = Console.ReadLine();
                 userLines = new Dictionary<int, int[]>();
                 if (int.TryParse(line, out int numberOfLines))
@@ -154,7 +203,7 @@ namespace Lottery
             }
             else if(mode == "search")
             {
-
+                Search();
             }
             else
             {
@@ -241,9 +290,7 @@ namespace Lottery
 
             Console.WriteLine("Total cost: £{0}", cost);
             Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", maxAmountMatch, bonusMatched);
-
             Console.WriteLine("You won: £{0}", prizeMoney);
-           // Console.WriteLine("Draw Number: {0}", drawNumber);
 
             Save(ballsDrawn);
         }
@@ -253,15 +300,18 @@ namespace Lottery
             using(DrawContext context = new DrawContext())
             {
                 //get the ID first
+                int newID = 0;
                 var draws = context.Draw.ToList();
-                int lastID = draws.Last().ID;
+                if(draws != null && draws.Count > 0)
+                {
+                    int lastID = draws.Last().ID;
 
-                //operator precedence, cant do newID = lastID++ since the variable
-                //is assigned first then incremented
-                int newID = lastID;
+                    //operator precedence, cant do newID = lastID++ since the variable
+                    //is assigned first then incremented
+                    newID = lastID;
+                }
+               
                 newID++;
-
-
 
                 Draw draw = new();
                 draw.Cost = cost;

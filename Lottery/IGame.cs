@@ -15,5 +15,7 @@ namespace Lottery
         public int [] GenerateDraw();
 
         public void GetStats();
+
+        public void Search();
     }
 }
