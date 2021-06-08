@@ -8,7 +8,7 @@ namespace Lottery
 {
     public enum Games
     {
-        thunderball,
-        lotto
+        Thunderball,
+        Lotto
     }
 }

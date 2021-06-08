@@ -12,7 +12,8 @@ namespace Lottery
                 String mode = Console.ReadLine();
                 if(mode == "lotto")
                 {
-                    
+                    IGame game = new Lotto();
+                    game.SelectMode();
                 }
                 else if(mode == "thunderball")
                 {

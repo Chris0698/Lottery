@@ -1,13 +1,88 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Lottery
 {
-    public class Thunderball : Game, IGame
+    public class Lotto : Game, IGame
     {
-        public Thunderball() : base(6, 1, Games.Thunderball)
+        public Lotto() : base(7, 2, Games.Lotto)
         {
+
+        }
+
+        public void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost)
+        {
+            prizeMoney = 0;
+            int totalMatch = 0;
+            int maxAmountMatch = 0;
+            bool bonusMatched = false;
+
+            //loop through each of the user lines
+            foreach (var line in userLines)
+            {
+                int[] userNumbers = line.Value;
+                for (int i = 0; i < userNumbers.Length; i++)
+                {
+                    for (int j = i + 1; j < userNumbers.Length; j++)
+                    {
+                        if (userNumbers[j] == ballsDrawn[i])
+                        {
+                            totalMatch++;
+                        }
+                    }
+
+                    //compare the bonuses
+                    if (ballsDrawn[0] == userNumbers[0])
+                    {
+                        bonusMatched = true;
+                    }
+
+                    if (maxAmountMatch < totalMatch)
+                    {
+                        maxAmountMatch = totalMatch;
+                    }
+
+                    totalMatch = 0;
+                }
+            }
+
+            if (maxAmountMatch == 2)
+            {
+                //lucky dip
+            }
+            else if (maxAmountMatch == 3)
+            {
+                prizeMoney = 30;
+            }
+            else if (maxAmountMatch == 4)
+            {
+                prizeMoney = 140;
+            }
+            else if (maxAmountMatch == 5)
+            {
+                prizeMoney = 1750;
+            }
+            else if (maxAmountMatch == 5 && bonusMatched)
+            {
+                prizeMoney = 1000000;
+            }
+            else if (maxAmountMatch == 6)
+            {
+                prizeMoney = 2000000;
+            }
+            else
+            {
+                prizeMoney = 0;
+            }
+
+            Console.WriteLine("Total cost: £{0}", cost);
+            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", maxAmountMatch, bonusMatched);
+            Console.WriteLine("You won: £{0}", prizeMoney);
+
+            Save(ballsDrawn, Games.Lotto);
         }
 
         public void GetStats()
@@ -16,17 +91,18 @@ namespace Lottery
             int totalWon = 0;
             int numberPlayed = 0;
             int highestWinning = 0;
-            using(DrawContext context = new())
+            using (DrawContext context = new())
             {
                 List<Draw> draws = context.Draw.ToList();
-                if(draws != null)
+                if (draws != null)
                 {
                     foreach (Draw draw in draws)
                     {
-                        if (draw.SelectedGame == "Thunderball")
+                        if (draw.SelectedGame == "Lotto")
                         {
-                            //since its £1 per game, just add the total cost
-                            numberPlayed += draw.Cost;
+                            //since its £2 per game, just add the total cost / 2
+                            //this doesn not work for lucky dips
+                            numberPlayed += draw.Cost / 2;
 
                             totalSpent += draw.Cost;
                             totalWon += draw.PrizeMoney;
@@ -38,7 +114,7 @@ namespace Lottery
                         }
                     }
 
-                    Console.WriteLine("-----------Stats for Thunderball-------------");
+                    Console.WriteLine("-----------Stats for Lotto-------------");
                     Console.WriteLine("Total Games Played: {0}", numberPlayed);
                     Console.WriteLine("Total Spent: £{0}.00", totalSpent);
 
@@ -55,38 +131,9 @@ namespace Lottery
             }
         }
 
-        public void Search()
-        {
-            Console.WriteLine("Enter Draw ID: ");
-            String enteredID = Console.ReadLine();
-            if(int.TryParse(enteredID, out int ID))
-            {
-                using (DrawContext context = new())
-                {
-                    if(context.Draw != null)
-                    {
-                        List<Draw> draws = context.Draw.ToList();
-                        foreach (Draw draw in draws)
-                        {
-                            //really thunderball and lotto should be in its own table
-                            if (draw.ID == ID && draw.SelectedGame == "Thunderball")
-                            {
-                                string drawnNumbers = draw.DrawnNumbers;
-
-                               
-                                Console.WriteLine("Drawn Numbers: " + drawnNumbers);
-          
-                                break;
-                            }
-                        }   
-                    }
-                }
-            }
-        }
-
         public void Play()
         {
-            Console.WriteLine("How many games, £1 per line.");
+            Console.WriteLine("How many games, £2 per line.");
             String line = Console.ReadLine();
             userLines = new Dictionary<int, int[]>();
             if (int.TryParse(line, out int numberOfLines))
@@ -126,7 +173,7 @@ namespace Lottery
                     else
                     {
                         Console.WriteLine("Enter your numbers for gamme {0}: ", i + 1);
-                        Console.WriteLine("Select 5 mumbers between 1 and 39 with no repeats, and 1 bonus between 1 - 14");
+                        Console.WriteLine("Select 6 mumbers between 1 and 59 with no repeats.");
                         String numbersString = Console.ReadLine();
                         String[] numbers = numbersString.Split(" ");
                         for (int j = 0; j < numbers.Length; j++)
@@ -158,15 +205,20 @@ namespace Lottery
             }
         }
 
+        public void Search()
+        {
+            throw new NotImplementedException();
+        }
+
         public void SelectMode()
         {
-            Console.WriteLine("Thunderball\nEnter mode:");
+            Console.WriteLine("Lotto\nEnter mode:");
             String mode = Console.ReadLine();
-            if(mode == "play")
+            if (mode == "play")
             {
                 Play();
             }
-            else if(mode == "search")
+            else if (mode == "search")
             {
                 Search();
             }
@@ -174,90 +226,6 @@ namespace Lottery
             {
                 GetStats();
             }
-        }
-
-        public void CheckWinnings(int [] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost)
-        {
-            prizeMoney = 0;
-            int totalMatch = 0;
-            int maxAmountMatch = 0;
-            bool bonusMatched = false;
-
-            //loop through each of the user lines
-            foreach (var line in userLines)
-            {
-                int[] userNumbers = line.Value;
-                for(int i = 0;  i < userNumbers.Length; i++)
-                {
-                    for(int j = i + 1; j < userNumbers.Length; j++)
-                    {
-                        if(userNumbers[j] == ballsDrawn[i])
-                        {
-                            totalMatch++;
-                        }
-                    }
-
-                    //compare the bonuses
-                    if (ballsDrawn[0] == userNumbers[0])
-                    {
-                        bonusMatched = true;
-                    }
-
-                    if(maxAmountMatch < totalMatch)
-                    {
-                        maxAmountMatch = totalMatch;
-                    }
-
-                    totalMatch = 0;
-                }
-            }
-
-            if(maxAmountMatch == 0 && bonusMatched)
-            {
-                prizeMoney = 3;
-            }
-            else if(maxAmountMatch == 1 && bonusMatched)
-            {
-                prizeMoney = 5;
-            }
-            else if(maxAmountMatch == 2 && bonusMatched)
-            {
-                prizeMoney = 10;
-            }
-            else if(maxAmountMatch == 3)
-            {
-                prizeMoney = 10;
-            }
-            else if(maxAmountMatch == 3 && bonusMatched)
-            {
-                prizeMoney = 20;
-            }
-            else if(maxAmountMatch == 4)
-            {
-                prizeMoney = 100;
-            }
-            else if(maxAmountMatch == 4 && bonusMatched)
-            {
-                prizeMoney = 250;
-            }
-            else if(maxAmountMatch == 5)
-            {
-                prizeMoney = 5000;
-            }
-            else if(maxAmountMatch == 5 && bonusMatched)
-            {
-                prizeMoney = 500000;
-            }
-            else
-            {
-                prizeMoney = 0;
-            }
-
-            Console.WriteLine("Total cost: £{0}", cost);
-            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", maxAmountMatch, bonusMatched);
-            Console.WriteLine("You won: £{0}", prizeMoney);
-
-            Save(ballsDrawn, Games.Thunderball);
         }
     }
 }
