@@ -9,6 +9,7 @@ namespace Lottery
     //this interface is not being used right..
     public interface IGame
     {
+
         public void SelectMode();
 
         public void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost);

@@ -10,7 +10,6 @@ namespace Lottery
     public class Draw
     {
         [Key]
-        //[DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         public string DrawnNumbers { get; set; }

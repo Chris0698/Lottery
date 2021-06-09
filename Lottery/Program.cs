@@ -6,19 +6,45 @@ namespace Lottery
     {
         public static void Main(string[] args)
         {
-            if(args.Length == 0)
+            Console.WriteLine("Enter mode: ");
+            String modeString = Console.ReadLine();
+            Modes mode = Modes.NA;
+            switch(modeString)
             {
-                Console.WriteLine("Enter game: ");
-                String mode = Console.ReadLine();
-                if(mode == "lotto")
+                case "play":
+                    mode = Modes.Play;
+                    break;
+                case "stats":
+                    mode = Modes.Stats;
+                    break;
+                default:
+                    break;
+            }
+
+            if(mode == Modes.Play)
+            {
+                Console.WriteLine("Which game to play?");
+                String game = Console.ReadLine();
+                if(game == "thunderball")
                 {
-                    IGame game = new Lotto();
-                    game.SelectMode();
+                    new Thunderball().Play();
                 }
-                else if(mode == "thunderball")
+                else
                 {
-                    IGame thunderball = new Thunderball();
-                    thunderball.SelectMode();
+                    new Lotto().Play();
+                }
+            }
+            else if(mode == Modes.Stats)
+            {
+                Console.WriteLine("Which stat to list?");
+                String game = Console.ReadLine();
+                if (game == "thunderball")
+                {
+                    new Thunderball().GetStats();
+                }
+                else
+                {
+                    new Lotto().GetStats();
                 }
             }
         }

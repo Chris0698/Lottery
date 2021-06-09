@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Lottery
 {
-    public enum ModesInGame
+    public enum Modes
     {
         Play,
-        ListStats
+        Stats,
+        NA
     }
 }
