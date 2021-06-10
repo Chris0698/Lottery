@@ -4,6 +4,8 @@ namespace Lottery
 {
     public class Program
     {
+        //add layers to the application 
+
         public static void Main(string[] args)
         {
             Console.WriteLine("Enter mode: ");
@@ -27,11 +29,11 @@ namespace Lottery
                 String game = Console.ReadLine();
                 if(game == "thunderball")
                 {
-                    new Thunderball().Play();
+                    new Game(6, 1, Games.Thunderball).Play();
                 }
                 else
                 {
-                    new Lotto().Play();
+                    new Game(6, 2, Games.Lotto).Play();
                 }
             }
             else if(mode == Modes.Stats)
@@ -40,11 +42,11 @@ namespace Lottery
                 String game = Console.ReadLine();
                 if (game == "thunderball")
                 {
-                    new Thunderball().GetStats();
+                   // new Game(5, 1, Games.Thunderball)
                 }
                 else
                 {
-                    new Lotto().GetStats();
+                    //new Lotto().GetStats();
                 }
             }
         }
