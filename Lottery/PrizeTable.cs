@@ -9,6 +9,10 @@ namespace Lottery
         public int AmountMatched { get; private set; }
         public bool BonusMatched { get; private set; }
 
+        /// <summary>
+        /// add this to a table if possible
+        /// </summary>
+        /// <param name="game"></param>
         public PrizeTable(Games game)
         {
             prizeTable = new();

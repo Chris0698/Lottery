@@ -38,15 +38,15 @@ namespace Lottery
             }
             else if(mode == Modes.Stats)
             {
-                Console.WriteLine("Which stat to list?");
+                Console.WriteLine("Which game stats do you want to list?");
                 String game = Console.ReadLine();
                 if (game == "thunderball")
                 {
-                   // new Game(5, 1, Games.Thunderball)
+                    new Game(Games.Thunderball).GetStats();
                 }
                 else
                 {
-                    //new Lotto().GetStats();
+                    new Game(Games.Lotto).GetStats();
                 }
             }
         }

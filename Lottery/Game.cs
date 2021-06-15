@@ -8,17 +8,21 @@ namespace Lottery
 {
     public class Game
     {
-        protected int cost;
-        protected Dictionary<int, int[]> userLines;
-        protected int price;  //price of 1 game
-        protected Games game;
+        private int cost;
+        private Dictionary<int, int[]> userLines;
+        private int price;  //price of 1 game
+        private Games game;
 
-        protected readonly int NUMBER_OF_BALLS;
+        private readonly int NUMBER_OF_BALLS;
 
-        public Game(int numberOfBallsToBeDrawn, int price, Games game)
+        public Game(int numberOfBallsToBeDrawn, int price, Games game) : this(game)
         {
             NUMBER_OF_BALLS = numberOfBallsToBeDrawn;
             this.price = price;
+        }
+
+        public Game(Games game)
+        {
             this.game = game;
         }
 
@@ -182,7 +186,7 @@ namespace Lottery
             }
         }
 
-        private void GetStats()
+        public void GetStats()
         {
             int totalSpent = 0;
             int totalWon = 0;
