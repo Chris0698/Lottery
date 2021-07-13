@@ -96,7 +96,7 @@ namespace Lottery
                 }
                 balls += "Bonus: " + drawnNumbers[0];
                 Console.WriteLine("Drawn numbers: " + balls);
-                CheckWinnings(drawnNumbers, userLines, cost);
+                CheckWinnings(drawnNumbers, userLines);
             }
         }
 
@@ -202,7 +202,7 @@ namespace Lottery
                         if (draw.SelectedGame == game.ToString())
                         {
                             //since its £1 per game, just add the total cost
-                            numberPlayed += draw.Cost;
+                            numberPlayed++;
 
                             totalSpent += draw.Cost;
                             totalWon += draw.PrizeMoney;
@@ -214,14 +214,17 @@ namespace Lottery
                         }
                     }
 
-                    Console.WriteLine("-----------Stats for Thunderball-------------");
+                    Console.WriteLine("-----------Stats for {0}-------------", game.ToString());
                     Console.WriteLine("Total Games Played: {0}", numberPlayed);
                     Console.WriteLine("Total Spent: £{0}.00", totalSpent);
+
 
                     //remember int / int results in int
                     float averageWinning = (float)totalWon / (float)numberPlayed;
                     Console.WriteLine("Average Won: £" + averageWinning);
                     Console.WriteLine("Highest Winning: £{0}.00", highestWinning);
+
+                    Console.WriteLine("Total Profit: £{0}.00", totalWon - totalSpent);
                     Console.WriteLine("Total Won: £{0}.00", totalWon);
                 }
                 else
@@ -273,7 +276,7 @@ namespace Lottery
             }
         }
 
-        private void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost)
+        private void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines)
         {
             PrizeTable prizeTable = new(game);
             int prize = prizeTable.GetPrize(ballsDrawn, userLines);
