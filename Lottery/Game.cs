@@ -220,12 +220,12 @@ namespace Lottery
 
 
                     //remember int / int results in int
-                    float averageWinning = (float)totalWon / (float)numberPlayed;
+                    float averageWinning = totalWon / (float)numberPlayed;
                     Console.WriteLine("Average Won: £" + averageWinning);
                     Console.WriteLine("Highest Winning: £{0}.00", highestWinning);
 
-                    Console.WriteLine("Total Profit: £{0}.00", totalWon - totalSpent);
                     Console.WriteLine("Total Won: £{0}.00", totalWon);
+                    Console.WriteLine("Total Profit: £{0}.00", totalWon - totalSpent);
                 }
                 else
                 {
@@ -280,12 +280,10 @@ namespace Lottery
         {
             PrizeTable prizeTable = new(game);
             int prize = prizeTable.GetPrize(ballsDrawn, userLines);
-            int maxAmountMatch = prizeTable.AmountMatched;
-            bool bonusMatched = prizeTable.BonusMatched;
 
             Console.WriteLine("Total cost: £{0}", cost);
-            Console.WriteLine("Numbers matched: {0}, bonus matched: {1}", maxAmountMatch, bonusMatched);
             Console.WriteLine("You won: £{0}", prize);
+            Console.WriteLine("Profit: £{0}", prize - cost);
 
             Save(ballsDrawn, game, prize);
         }
