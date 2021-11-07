@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lottery.Migrations
 {
     [DbContext(typeof(DrawContext))]
-    [Migration("20210607173955_NewDatabase")]
-    partial class NewDatabase
+    [Migration("20211107165746_Draws")]
+    partial class Draws
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,14 +30,17 @@ namespace Lottery.Migrations
                     b.Property<int>("Cost")
                         .HasColumnType("int");
 
-                    b.Property<int>("Game")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Numbers")
+                    b.Property<string>("DrawnNumbers")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PrizeMoney")
                         .HasColumnType("int");
+
+                    b.Property<string>("SelectedGame")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserNumbers")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

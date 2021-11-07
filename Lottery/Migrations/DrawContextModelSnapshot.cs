@@ -28,14 +28,17 @@ namespace Lottery.Migrations
                     b.Property<int>("Cost")
                         .HasColumnType("int");
 
-                    b.Property<int>("Game")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Numbers")
+                    b.Property<string>("DrawnNumbers")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PrizeMoney")
                         .HasColumnType("int");
+
+                    b.Property<string>("SelectedGame")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserNumbers")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

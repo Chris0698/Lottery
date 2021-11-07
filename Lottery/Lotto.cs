@@ -13,7 +13,7 @@ namespace Lottery
 
         }
 
-        public void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost)
+        public void CheckWinnings(int[] ballsDrawn, Dictionary<int, int[]> userLines, int totalCost, bool verbose = false)
         {
             prizeMoney = 0;
             int totalMatch = 0;

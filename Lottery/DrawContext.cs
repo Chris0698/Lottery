@@ -12,7 +12,5 @@ namespace Lottery
         }
 
         public DbSet<Draw> Draw { get; set; }
-
-
     }
 }

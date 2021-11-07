@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lottery
 {
+	//adjust it so a random amount of games can be played at once
     public abstract class Game
     {
         protected int cost;
